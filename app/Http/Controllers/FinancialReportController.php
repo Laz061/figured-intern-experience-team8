@@ -190,7 +190,58 @@ class FinancialReportController extends Controller
                 ], 500);
             }
 
-            $prompt = $request->input('prompt', 'Provide general business insights');
+            // Base user prompt (what they are asking the AI to focus on)
+            $userPrompt = $request->input('prompt', 'Provide actionable insights on the financial performance.');
+
+            // Retrieve the financial report JSON as associative array for context
+            // (getData(true) returns an array instead of stdClass)
+            $reportData = $this->getFinancialReport()->getData(true);
+
+            // Optional lightweight summary to keep prompt efficient (derive key totals)
+            $summary = [
+                'company' => $reportData['company'] ?? null,
+                'section_totals' => collect($reportData['sections'] ?? [])->map(function ($section) {
+                    $totalValues = $section['total']['values'] ?? null;
+                    $total = is_array($totalValues) ? end($totalValues) : null; // assume last value is grand total
+                    return [
+                        'id' => $section['id'] ?? $section['name'] ?? 'unknown',
+                        'name' => $section['name'] ?? 'Unknown',
+                        'grand_total' => $total,
+                    ];
+                })->values()->all(),
+                'summary_lines' => collect($reportData['summary'] ?? [])->map(function ($line) {
+                    $vals = $line['values'] ?? [];
+                    return [
+                        'name' => $line['name'] ?? 'Metric',
+                        'total' => is_array($vals) ? end($vals) : null,
+                    ];
+                })->all(),
+            ];
+
+            // Encode full report JSON but truncate if excessively large to avoid hitting token limits
+            $fullJson = json_encode($reportData, JSON_UNESCAPED_SLASHES);
+            $maxLength = 18000; // safety cap on characters sent to model
+            if (strlen($fullJson) > $maxLength) {
+                $fullJson = substr($fullJson, 0, $maxLength) . '...TRUNCATED';
+            }
+
+            $prompt = <<<PROMPT
+            You are an expert agricultural financial analyst. Use the provided JSON financial report data to answer the user request with concise, insight-driven bullet points (max ~180 words). Focus on trends, notable spikes/drops, profitability drivers, risks, and opportunities. Avoid restating raw numbers already obvious unless needed for context.
+
+            User request: {$userPrompt}
+
+            High level summary (pre-computed):
+            """
+            {$this->encodeForPrompt($summary)}
+            """
+
+            Full financial report JSON:
+            """
+            {$fullJson}
+            """
+
+            Respond with bullet points only.
+            PROMPT;
 
             $response = Prism::text()
                 ->using('openai', 'gpt-4')
@@ -198,13 +249,29 @@ class FinancialReportController extends Controller
                 ->generate();
 
             return response()->json([
-                'response' => $response->text
+                'response' => $response->text,
+                'used_context' => [
+                    'summary' => $summary,
+                    'truncated_full_json' => strlen($fullJson) < $maxLength ? false : true,
+                ]
             ]);
 
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Failed to generate commentary: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Helper to safely encode arrays for inclusion inside a prompt block.
+     */
+    protected function encodeForPrompt($data): string
+    {
+        try {
+            return json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            return 'ENCODING_ERROR';
         }
     }
 }
