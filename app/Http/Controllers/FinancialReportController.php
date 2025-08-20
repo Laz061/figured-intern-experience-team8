@@ -226,22 +226,36 @@ class FinancialReportController extends Controller
             }
 
             $prompt = <<<PROMPT
-            You are an expert agricultural financial analyst. Use the provided JSON financial report data to answer the user request with concise, insight-driven bullet points (max ~180 words). Focus on trends, notable spikes/drops, profitability drivers, risks, and opportunities. Avoid restating raw numbers already obvious unless needed for context.
+You are an expert agricultural financial analyst. Use the JSON financial report data to respond to the user request with concise, insight‑driven, decision‑oriented insight (target <= 190 words).
 
-            User request: {$userPrompt}
+MANDATORY FOCUS AREAS:
+1. Key Performance Drivers (what is driving results so far; highlight concentration risk e.g. one product dominating income)
+2. Emerging / Hidden Risks (cost spikes, negative months, volatility, dependency, seasonality concerns, margin compression)
+3. Cost Control & Efficiency Opportunities (where spend is elevated or fixed costs heavy relative to revenue trend)
+4. Forward Watchlist (next 2–3 months: what to monitor based on patterns; flag any months with sharp expected changes)
+5. Actionable Recommendations (clear, specific, farm‑context steps; avoid generic advice)
 
-            High level summary (pre-computed):
-            """
-            {$this->encodeForPrompt($summary)}
-            """
+RULES:
+- Do NOT restate full raw tables or every number; cite only the few most material figures (<= 5 numbers total) when necessary.
+- If data is too sparse to assess an area, explicitly state the limitation and an information request.
+- Prioritise materiality (largest totals, largest swings, fast-growing / shrinking areas).
+- Use bullet subsections with headers exactly in this order: Key Drivers, Risks, Opportunities, Watchlist, Recommendations.
+- Keep each bullet concise (max ~22 words) and actionable.
 
-            Full financial report JSON:
-            """
-            {$fullJson}
-            """
+User request: {$userPrompt}
 
-            Respond with bullet points only.
-            PROMPT;
+High level summary (pre-computed):
+"""
+{$this->encodeForPrompt($summary)}
+"""
+
+Full financial report JSON (may be truncated):
+"""
+{$fullJson}
+"""
+
+Produce only the five titled sections with bullet points. No intro or closing sentence.
+PROMPT;
 
             $response = Prism::text()
                 ->using('openai', 'gpt-4')
