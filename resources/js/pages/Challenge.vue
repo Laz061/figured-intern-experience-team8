@@ -70,13 +70,22 @@ onMounted(() => {
 <template>
     <Head title="Financial Report Challenge" />
 
-    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-        <div class="mx-auto max-w-7xl px-4 py-8">
+    <div class="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-lime-100">
+        <!-- Floating farm elements -->
+        <div class="pointer-events-none fixed inset-0 overflow-hidden">
+            <div class="absolute top-20 left-10 animate-bounce text-4xl" style="animation-delay: 0s">🌾</div>
+            <div class="absolute top-32 right-20 animate-bounce text-3xl" style="animation-delay: 1s">🐄</div>
+            <div class="absolute bottom-20 left-20 animate-bounce text-2xl" style="animation-delay: 2s">🌱</div>
+            <div class="absolute top-1/2 right-10 animate-bounce text-3xl" style="animation-delay: 3s">🚜</div>
+            <div class="absolute right-32 bottom-32 animate-bounce text-2xl" style="animation-delay: 4s">🌽</div>
+        </div>
+
+        <div class="relative z-10 mx-auto max-w-7xl px-4 py-8">
             <!-- Header -->
             <div class="mb-12">
                 <Link
                     href="/"
-                    class="group mb-6 inline-flex items-center text-sm font-medium text-slate-600 transition-all duration-200 hover:text-indigo-600"
+                    class="group mb-6 inline-flex items-center text-sm font-medium text-green-700 transition-all duration-200 hover:text-emerald-600"
                 >
                     <svg class="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -85,11 +94,12 @@ onMounted(() => {
                 </Link>
 
                 <div class="text-center">
-                    <h1 class="mb-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 bg-clip-text text-5xl font-black text-transparent">
-                        🌾 Figured Financial Report
+                    <h1 class="mb-4 bg-gradient-to-r from-green-600 via-emerald-600 to-lime-600 bg-clip-text text-5xl font-black text-transparent">
+                        🐄 Figured Farm Financial Report 🌾
                     </h1>
-                    <p class="mx-auto max-w-2xl text-lg text-slate-600">
-                        Transform this basic data display into a beautiful, interactive financial report that brings your data to life!
+                    <p class="mx-auto max-w-2xl text-lg text-green-700">
+                        Fresh from the farm! Transform this basic data display into a beautiful, interactive financial report that brings your
+                        agricultural data to life!
                     </p>
                 </div>
             </div>
@@ -98,11 +108,14 @@ onMounted(() => {
             <div v-if="loading" class="flex items-center justify-center py-20">
                 <div class="text-center">
                     <div class="relative mb-6">
-                        <div class="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-indigo-200 border-t-indigo-600"></div>
-                        <div class="absolute inset-0 mx-auto h-16 w-16 animate-pulse rounded-full border-4 border-indigo-100"></div>
+                        <div class="mx-auto h-16 w-16 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div>
+                        <div class="absolute inset-0 mx-auto h-16 w-16 animate-pulse rounded-full border-4 border-emerald-100"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="animate-bounce text-2xl">🐄</span>
+                        </div>
                     </div>
-                    <p class="text-lg font-medium text-slate-700">Loading financial data...</p>
-                    <p class="text-sm text-slate-500">Preparing your report...</p>
+                    <p class="text-lg font-medium text-green-800">Loading farm financial data...</p>
+                    <p class="text-sm text-green-600">Milking the numbers... 🥛</p>
                 </div>
             </div>
 
@@ -111,22 +124,15 @@ onMounted(() => {
                 <div class="rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-red-100 p-8 shadow-lg">
                     <div class="text-center">
                         <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                            <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-                                ></path>
-                            </svg>
+                            <span class="text-3xl">🐄💔</span>
                         </div>
-                        <h2 class="mb-2 text-xl font-bold text-red-800">Error Loading Data</h2>
+                        <h2 class="mb-2 text-xl font-bold text-red-800">Oops! The cow got loose!</h2>
                         <p class="mb-6 text-red-700">{{ error }}</p>
                         <button
                             @click="fetchFinancialData"
                             class="rounded-lg bg-red-600 px-6 py-3 font-medium text-white shadow-lg transition-all duration-200 hover:bg-red-700 hover:shadow-xl"
                         >
-                            Try Again
+                            🔄 Wrangle the Data Back
                         </button>
                     </div>
                 </div>
@@ -136,46 +142,60 @@ onMounted(() => {
             <div v-else-if="reportData" class="space-y-8">
                 <!-- Financial Report Table -->
                 <div
-                    class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white/80 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl"
+                    class="group relative overflow-hidden rounded-2xl border border-green-200 bg-white/90 shadow-xl backdrop-blur-sm transition-all duration-300 hover:shadow-2xl"
                 >
                     <!-- Decorative gradient overlay -->
                     <div
-                        class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-indigo-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                        class="absolute inset-0 bg-gradient-to-br from-green-500/5 via-emerald-500/5 to-lime-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
                     ></div>
+
+                    <!-- Farm pattern background -->
+                    <div class="absolute inset-0 opacity-5">
+                        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <pattern id="farm-pattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+                                    <text x="10" y="20" font-size="20" fill="#16a34a">🌾</text>
+                                    <text x="40" y="50" font-size="16" fill="#059669">🐄</text>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#farm-pattern)" />
+                        </svg>
+                    </div>
 
                     <div class="relative p-8">
                         <div class="mb-6 flex items-center space-x-3">
                             <div
-                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-lg"
+                                class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg"
                             >
-                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                                    ></path>
-                                </svg>
+                                <span class="text-xl">🚜</span>
                             </div>
                             <div>
-                                <h3 class="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent">
-                                    Financial Report
+                                <h3 class="bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-2xl font-bold text-transparent">
+                                    Farm Financial Report
                                 </h3>
-                                <p class="text-sm text-slate-500">Profit & Loss Statement</p>
+                                <p class="text-sm text-green-600">Profit & Loss Statement 🌱</p>
                             </div>
                         </div>
 
                         <div class="overflow-x-auto rounded-xl border border-slate-200">
                             <table class="min-w-full text-left text-sm">
-                                <thead class="border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
+                                <thead class="border-b border-slate-200 bg-gradient-to-r from-green-50 to-emerald-50">
                                     <tr>
-                                        <th class="border-r border-slate-200 px-6 py-4 font-semibold text-slate-700">Line Item</th>
+                                        <th class="border-r border-slate-200 px-6 py-4 font-semibold text-green-800">
+                                            <div class="flex items-center space-x-2">
+                                                <span>🏪</span>
+                                                <span>Line Item</span>
+                                            </div>
+                                        </th>
                                         <th
                                             v-for="(col, idx) in reportData.columns"
                                             :key="'col-' + idx"
-                                            class="border-r border-slate-200 px-6 py-4 text-center font-semibold text-slate-700 last:border-r-0"
+                                            class="border-r border-slate-200 px-6 py-4 text-center font-semibold text-green-800 last:border-r-0"
                                         >
-                                            {{ col.month }}
+                                            <div class="flex items-center justify-center space-x-1">
+                                                <span>📅</span>
+                                                <span>{{ col.month }}</span>
+                                            </div>
                                         </th>
                                     </tr>
                                 </thead>
@@ -184,14 +204,14 @@ onMounted(() => {
                                     <!-- Iterate over sections -->
                                     <template v-for="(section, sIdx) in reportData.sections" :key="'section-' + sIdx">
                                         <tr
-                                            class="bg-gradient-to-r from-blue-50 to-indigo-50 transition-all duration-200 hover:from-blue-100 hover:to-indigo-100"
+                                            class="bg-gradient-to-r from-green-50 to-emerald-50 transition-all duration-200 hover:from-green-100 hover:to-emerald-100"
                                         >
                                             <td
-                                                class="border-r border-slate-200 px-6 py-4 font-bold text-slate-800"
+                                                class="border-r border-slate-200 px-6 py-4 font-bold text-green-800"
                                                 :colspan="reportData.columns.length + 1"
                                             >
                                                 <div class="flex items-center space-x-2">
-                                                    <div class="h-2 w-2 rounded-full bg-blue-500"></div>
+                                                    <div class="h-2 w-2 rounded-full bg-green-500"></div>
                                                     <span>{{ section.name }}</span>
                                                 </div>
                                             </td>
@@ -200,21 +220,14 @@ onMounted(() => {
                                         <!-- Iterate over subsections -->
                                         <template v-for="(subsection, ssIdx) in section.subsections" :key="'subsection-' + ssIdx">
                                             <tr
-                                                class="bg-gradient-to-r from-slate-50 to-blue-50/30 transition-all duration-200 hover:from-slate-100 hover:to-blue-100/50"
+                                                class="bg-gradient-to-r from-slate-50 to-green-50/30 transition-all duration-200 hover:from-slate-100 hover:to-green-100/50"
                                             >
                                                 <td
-                                                    class="border-r border-slate-200 px-6 py-3 font-semibold text-slate-700"
+                                                    class="border-r border-slate-200 px-6 py-3 font-semibold text-green-700"
                                                     :colspan="reportData.columns.length + 1"
                                                 >
                                                     <div class="flex items-center space-x-2 pl-4">
-                                                        <svg class="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path
-                                                                stroke-linecap="round"
-                                                                stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M9 5l7 7-7 7"
-                                                            ></path>
-                                                        </svg>
+                                                        <span class="text-green-500">🌾</span>
                                                         <span>{{ subsection.name }}</span>
                                                     </div>
                                                 </td>
@@ -224,14 +237,14 @@ onMounted(() => {
                                             <template v-if="subsection.subsections">
                                                 <template v-for="(subsub, sssIdx) in subsection.subsections" :key="'subsub-' + sssIdx">
                                                     <tr
-                                                        class="from-slate-25 to-blue-25 bg-gradient-to-r transition-all duration-200 hover:from-slate-50 hover:to-blue-50"
+                                                        class="from-slate-25 to-green-25 bg-gradient-to-r transition-all duration-200 hover:from-slate-50 hover:to-green-50"
                                                     >
                                                         <td
-                                                            class="border-r border-slate-200 px-6 py-3 font-medium text-slate-600 italic"
+                                                            class="border-r border-slate-200 px-6 py-3 font-medium text-green-600 italic"
                                                             :colspan="reportData.columns.length + 1"
                                                         >
                                                             <div class="flex items-center space-x-2 pl-8">
-                                                                <div class="h-1.5 w-1.5 rounded-full bg-slate-400"></div>
+                                                                <span class="text-emerald-400">🌱</span>
                                                                 <span>{{ subsub.name }}</span>
                                                             </div>
                                                         </td>
@@ -239,12 +252,13 @@ onMounted(() => {
 
                                                     <!-- Line Items -->
                                                     <template v-for="(item, iIdx) in subsub.line_items" :key="'item-' + iIdx">
-                                                        <tr class="group/row transition-all duration-200 hover:bg-blue-50/30">
-                                                            <td class="border-r border-slate-200 px-6 py-3 pl-12 text-slate-700">
+                                                        <tr class="group/row transition-all duration-200 hover:bg-green-50/30">
+                                                            <td class="border-r border-slate-200 px-6 py-3 pl-12 text-green-700">
                                                                 <div class="flex items-center space-x-2">
-                                                                    <div
-                                                                        class="h-1 w-1 rounded-full bg-slate-300 transition-colors duration-200 group-hover/row:bg-blue-400"
-                                                                    ></div>
+                                                                    <span
+                                                                        class="text-green-400 transition-colors duration-200 group-hover/row:text-green-600"
+                                                                        >🐄</span
+                                                                    >
                                                                     <span>{{ item.name }}</span>
                                                                 </div>
                                                             </td>
@@ -254,7 +268,7 @@ onMounted(() => {
                                                                 class="border-r border-slate-200 px-6 py-3 text-right font-medium last:border-r-0"
                                                             >
                                                                 <span
-                                                                    class="inline-flex items-center rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm text-slate-700 transition-all duration-200 group-hover/row:bg-blue-100 group-hover/row:text-blue-800"
+                                                                    class="inline-flex items-center rounded-lg bg-green-100 px-3 py-1 font-mono text-sm text-green-700 transition-all duration-200 group-hover/row:bg-green-200 group-hover/row:text-green-800"
                                                                 >
                                                                     {{ val.toLocaleString() }}
                                                                 </span>
@@ -267,12 +281,13 @@ onMounted(() => {
                                             <!-- Line Items directly under subsection -->
                                             <template v-if="subsection.line_items">
                                                 <template v-for="(item, iIdx) in subsection.line_items" :key="'item-' + iIdx">
-                                                    <tr class="group/row transition-all duration-200 hover:bg-blue-50/30">
-                                                        <td class="border-r border-slate-200 px-6 py-3 pl-8 text-slate-700">
+                                                    <tr class="group/row transition-all duration-200 hover:bg-green-50/30">
+                                                        <td class="border-r border-slate-200 px-6 py-3 pl-8 text-green-700">
                                                             <div class="flex items-center space-x-2">
-                                                                <div
-                                                                    class="h-1 w-1 rounded-full bg-slate-300 transition-colors duration-200 group-hover/row:bg-blue-400"
-                                                                ></div>
+                                                                <span
+                                                                    class="text-green-400 transition-colors duration-200 group-hover/row:text-green-600"
+                                                                    >🌽</span
+                                                                >
                                                                 <span>{{ item.name }}</span>
                                                             </div>
                                                         </td>
@@ -282,7 +297,7 @@ onMounted(() => {
                                                             class="border-r border-slate-200 px-6 py-3 text-right font-medium last:border-r-0"
                                                         >
                                                             <span
-                                                                class="inline-flex items-center rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm text-slate-700 transition-all duration-200 group-hover/row:bg-blue-100 group-hover/row:text-blue-800"
+                                                                class="inline-flex items-center rounded-lg bg-green-100 px-3 py-1 font-mono text-sm text-green-700 transition-all duration-200 group-hover/row:bg-green-200 group-hover/row:text-green-800"
                                                             >
                                                                 {{ val.toLocaleString() }}
                                                             </span>
@@ -306,8 +321,9 @@ onMounted(() => {
                     <div class="absolute inset-0 opacity-5">
                         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                             <defs>
-                                <pattern id="target-pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <circle cx="10" cy="10" r="2" fill="#f59e0b" />
+                                <pattern id="target-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <text x="5" y="15" font-size="16" fill="#f59e0b">🎯</text>
+                                    <text x="25" y="35" font-size="14" fill="#d97706">🌾</text>
                                 </pattern>
                             </defs>
                             <rect width="100%" height="100%" fill="url(#target-pattern)" />
@@ -322,28 +338,21 @@ onMounted(() => {
                                 🎯
                             </div>
                             <h3 class="bg-gradient-to-r from-amber-800 to-orange-700 bg-clip-text text-xl font-bold text-transparent">
-                                Your Challenge
+                                Your Farm Challenge
                             </h3>
                         </div>
                         <div class="space-y-3 text-amber-800">
                             <p class="text-base leading-relaxed">
-                                Build a complete, interactive Profit & Loss report using the provided financial data.
+                                Build a complete, interactive farm Profit & Loss report using the provided agricultural financial data!
                             </p>
                             <p class="text-base leading-relaxed">
                                 The data is available in
                                 <code class="rounded-lg bg-amber-100 px-2 py-1 font-mono text-sm text-amber-900">reportData</code> - explore it and
-                                create a professional financial report interface.
+                                create a professional farm financial report interface that would make any farmer proud! 🌱
                             </p>
                             <div class="mt-4 flex items-center space-x-2 text-sm text-amber-700">
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    ></path>
-                                </svg>
-                                <span>Make it interactive, beautiful, and user-friendly!</span>
+                                <span class="text-lg">🐄</span>
+                                <span>Make it interactive, beautiful, and farm-friendly!</span>
                             </div>
                         </div>
                     </div>
@@ -459,14 +468,14 @@ onMounted(() => {
 
                 <!-- Challenge Links -->
                 <div
-                    class="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 to-blue-50 py-12 text-center shadow-lg"
+                    class="relative overflow-hidden rounded-2xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 py-12 text-center shadow-lg"
                 >
                     <!-- Decorative elements -->
                     <div class="absolute inset-0 opacity-10">
                         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                             <defs>
                                 <pattern id="grid-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#3b82f6" stroke-width="1" />
+                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#16a34a" stroke-width="1" />
                                 </pattern>
                             </defs>
                             <rect width="100%" height="100%" fill="url(#grid-pattern)" />
@@ -474,17 +483,17 @@ onMounted(() => {
                     </div>
 
                     <div class="relative">
-                        <h3 class="mb-6 bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-xl font-bold text-transparent">
-                            Ready to dive deeper?
+                        <h3 class="mb-6 bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-xl font-bold text-transparent">
+                            Ready to harvest some insights? 🌾
                         </h3>
                         <div class="flex flex-col items-center justify-center gap-4 sm:flex-row">
                             <a
                                 href="/CHALLENGE.md"
                                 target="_blank"
-                                class="group inline-flex items-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-1 hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl"
+                                class="group inline-flex items-center rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-1 hover:from-green-700 hover:to-emerald-700 hover:shadow-xl"
                             >
                                 <span class="mr-3 text-lg">📋</span>
-                                Challenge Requirements
+                                Farm Challenge Requirements
                                 <svg
                                     class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
                                     fill="none"
@@ -497,10 +506,10 @@ onMounted(() => {
                             <a
                                 href="/api/financial-report"
                                 target="_blank"
-                                class="group inline-flex items-center rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-1 hover:from-green-700 hover:to-emerald-700 hover:shadow-xl"
+                                class="group inline-flex items-center rounded-xl bg-gradient-to-r from-lime-600 to-green-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:-translate-y-1 hover:from-lime-700 hover:to-green-700 hover:shadow-xl"
                             >
-                                <span class="mr-3 text-lg">🔗</span>
-                                API Data
+                                <span class="mr-3 text-lg">�</span>
+                                Farm Data API
                                 <svg
                                     class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"
                                     fill="none"
